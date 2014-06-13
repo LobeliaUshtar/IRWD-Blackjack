@@ -1,0 +1,17 @@
+card values: # = equivalent number, face = 10, ace = 1 or 11
+21 is a win, over 21 is bust, 2 card minimum, hit gets another card, stay ends turn saving card vaules, other wins if one busts
+
+dealer specific rules: must hit if below 17, dealer wins utterly if gets 21
+
+
+Hints:
+1. Think of the data structure required to keep track of cards in a deck. 
+2. You'll need to look up and use a "while" loop, since there could be an indeterminate number of "hits" by both the player and dealer. "while" loops are used when we don't have a finite number of iterations.
+3. Code something. Get started, even if it's just capturing the player's name. Give it an honest attempt before looking at solutions.
+4. Use methods to extract the piece of functionality that calculates the total, since we need it throughout the program.
+
+Bonus:
+1. Save the player's name, and use it throughout the app.
+2. Ask the player if he wants to play again, rather than just exiting.
+3. Save not just the card value, but also the suit.
+4. Use multiple decks to prevent against card counting players.
