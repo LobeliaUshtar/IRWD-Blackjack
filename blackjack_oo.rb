@@ -1,13 +1,13 @@
 class Card
-  attr_accessor :suit, :value
+  attr_accessor :suit, :face
 
-  def initialize(suit, value)
+  def initialize(suit, face)
     @suit = suit
-    @value = value
+    @face = face
   end
 
   def to_s
-    "Card: #{@value} of #{@suit}"
+    "#{face} of #{suit}"
   end
 end
 
@@ -15,7 +15,7 @@ class Deck
   VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   SUITS = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
 
-  attr_accessor :cards, :dealt_card
+  attr_accessor :cards
 
   def initialize(num_decks=1)
     @cards = []
@@ -33,13 +33,8 @@ class Deck
     cards.shuffle!
   end
 
-  def deal(num_cards=1)
-    n = 1
-    while n <= num_cards
-      @dealt_card = cards.pop
-      puts "#{@dealt_card}"
-      n += 1
-    end
+  def deal
+    cards.pop
   end
 
   def size
@@ -47,17 +42,9 @@ class Deck
   end
 end
 
-class Player
-
-end
-
-class Dealer
-  
-end
-
 module Hand
-  def calculate_total(cards)
-    hand = cards.map { |card| card[1] }
+  def total
+    hand = cards.map { |card| card.face}
 
     total = 0
     hand.each do |value|
@@ -78,8 +65,45 @@ module Hand
   end
 
   def show_hand
-    
+    puts "\n--- #{name}'s Hand ---"
+    cards.each do |card|
+      puts "\t#{card}"
+    end
+    puts "#{name}'s Total: #{total}"
   end
+
+  def add_card(new_card)
+    cards << new_card
+  end
+
+  def busted?
+    total > 21
+  end
+end
+
+class Player
+  include Hand
+
+  attr_reader :name
+  attr_accessor :cards
+
+  def initialize(name)
+    @name = name.capitalize
+    @cards = []
+  end
+end
+
+class Dealer
+  include Hand
+
+  attr_reader :name
+  attr_accessor :cards
+
+  def initialize
+    @name = 'Dealer'
+    @cards = []
+  end
+  
 end
 
 class Game
@@ -94,4 +118,15 @@ class Game
 end
 
 deck = Deck.new
-deck.deal(2)
+
+player = Player.new('chris')
+2.times do
+  player.add_card(deck.deal)
+end
+player.show_hand
+
+dealer = Dealer.new
+2.times do
+  player.add_card(deck.deal)
+end
+dealer.show_hand
