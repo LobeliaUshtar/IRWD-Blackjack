@@ -103,7 +103,6 @@ class Dealer
     @name = 'Dealer'
     @cards = []
   end
-  
 end
 
 class Game
@@ -115,18 +114,19 @@ class Game
     @deck = Deck.new
   end
   
+  deck = Deck.new
+
+  player = Player.new('chris')
+  2.times do
+    player.add_card(deck.deal)
+  end
+  player.show_hand
+
+  dealer = Dealer.new
+  2.times do
+    dealer.add_card(deck.deal)
+  end
+  dealer.show_hand
 end
 
-deck = Deck.new
-
-player = Player.new('chris')
-2.times do
-  player.add_card(deck.deal)
-end
-player.show_hand
-
-dealer = Dealer.new
-2.times do
-  player.add_card(deck.deal)
-end
-dealer.show_hand
+Game.new
