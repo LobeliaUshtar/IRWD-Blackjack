@@ -1,12 +1,13 @@
 class Card
   attr_accessor :suit, :value
+
   def initialize(suit, value)
     @suit = suit
     @value = value
   end
 
   def to_s
-    puts "Card: #{@value} of #{@suit}"
+    "Card: #{@value} of #{@suit}"
   end
 end
 
@@ -14,7 +15,7 @@ class Deck
   VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   SUITS = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
 
-  attr_accessor :cards
+  attr_accessor :cards, :dealt_card
 
   def initialize(num_decks=1)
     @cards = []
@@ -25,14 +26,24 @@ class Deck
     end
     @cards = @cards * num_decks
     shuffling
+    @dealt_card
   end
 
   def shuffling
     cards.shuffle!
   end
 
-  def deal
-    cards.pop
+  def deal(num_cards=1)
+    n = 1
+    while n <= num_cards
+      @dealt_card = cards.pop
+      puts "#{@dealt_card}"
+      n += 1
+    end
+  end
+
+  def size
+    cards.size
   end
 end
 
@@ -82,14 +93,5 @@ class Game
   
 end
 
-c1 = Card.new('Hearts', '3')
-c2 = Card.new('Diamonds', '4')
-
-puts c1.suit
-puts c2.suit
-
-c1.suit = "Spades"
-c2.suit = "Clubs"
-
-puts c1.suit
-puts c2.suit
+deck = Deck.new
+deck.deal(2)
