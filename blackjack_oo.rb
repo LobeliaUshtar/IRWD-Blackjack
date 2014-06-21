@@ -26,7 +26,6 @@ class Deck
     end
     @cards = @cards * num_decks
     shuffling
-    @dealt_card
   end
 
   def shuffling
@@ -76,20 +75,23 @@ module Hand
     cards << new_card
   end
 
-  def busted?
-    total > 21
+  def is_busted?
+    total > Blackjack::BLACKJACK_AMOUNT
   end
 end
 
 class Player
   include Hand
 
-  attr_reader :name
-  attr_accessor :cards
+  attr_accessor :name, :cards
 
   def initialize(name)
-    @name = name.capitalize
+    @name = name
     @cards = []
+  end
+
+  def show_initial
+    show_hand
   end
 end
 
@@ -103,30 +105,140 @@ class Dealer
     @name = 'Dealer'
     @cards = []
   end
+
+  def show_initial
+    puts "\n--- #{name}'s Hand ---"
+    puts "\tHIDDEN"
+    puts "\t#{cards[1]}"
+    # puts "#{name}'s Total: #{total}"
+  end
 end
 
-class Game
-  attr_accessor :player, :dealer, :deck
+class Blackjack
+  attr_accessor :deck, :player, :dealer
+
+  BLACKJACK_AMOUNT = 21
+  DEALER_HIT_MIN = 17
 
   def initialize
-    @player = Player.new('Bob')
-    @dealer = Dealer.new
     @deck = Deck.new
+    @player = Player.new('Player1')
+    @dealer = Dealer.new
+  end
+
+  def set_player_name
+    puts "What is your name?"
+    player.name = gets.chomp.capitalize
+  end
+
+  def initial_deal
+    2.times do
+      player.add_card(deck.deal)
+      dealer.add_card(deck.deal)
+    end
+  end
+
+  def show_hands
+    player.show_initial
+    dealer.show_initial
+  end
+
+  def blackjack_or_bust?(player_or_dealer)
+    puts "\n"
+    if player_or_dealer.total == BLACKJACK_AMOUNT
+      if player_or_dealer.is_a?(Dealer)
+        puts "Sorry, dealer hit blackjack and #{player.name} losses. =("
+      else
+        puts "Congrats, #{player.name} hit balckjack and wins. =)"
+      end
+      exit
+    elsif player_or_dealer.is_busted?
+      if player_or_dealer.is_a?(Dealer)
+        puts "Congrats, dealer busted and #{player.name} wins. =)"
+      else
+        puts "Sorry, #{player.name} busted and loss. =("
+      end
+      play_again?
+    end
+  end
+
+  def player_turn
+    puts "\n#{player.name}'s turn."
+    
+    blackjack_or_bust?(player)
+    while !player.is_busted?
+      puts "\nWhat would you like to do? 1) hit 2) stay"
+      response = gets.chomp.to_i
+      if ![1, 2].include?(response)
+        puts "ERROR: you must enter 1 or 2"
+        next
+      end
+
+      if response == 2
+        puts "#{player.name} chose to stay."
+        break
+      end
+
+      new_card = deck.deal
+      puts "Dealing card to #{player.name}: #{new_card}"
+      player.add_card(new_card)
+      puts "#{player.name}'s Updated Total: #{player.total}"
+
+      blackjack_or_bust?(player)
+    end
+    puts "#{player.name} stays at #{player.total}."
+  end
+
+  def dealer_turn
+    puts "\nDealer's turn."
+    
+    blackjack_or_bust?(dealer)
+    while dealer.total < DEALER_HIT_MIN
+      new_card = deck.deal
+      puts "Dealing card to dealer: #{new_card}"
+      dealer.add_card(new_card)
+      puts "Dealer's Updated Total: #{dealer.total}"
+      blackjack_or_bust?(dealer)
+    end
+    puts "Dealer stays at #{dealer.total}."
+  end
+
+  def winner?
+    if player.total > dealer.total
+      puts "\nCongrats, #{player.name} wins!"
+    elsif player.total < dealer.total
+      puts "\nSorry, #{player.name} loses!"
+    else
+      puts "\nIt's a tie!"
+    end
+    play_again?
+  end
+
+  def play_again?
+    puts "\nWould you like to play again? YES or NO"
+    if gets.chomp.upcase == 'YES'
+      puts "Starting new game..."
+      deck = Deck.new
+      player.cards = []
+      dealer.cards = []
+      start
+    else
+      puts "Goodbye!"
+      exit
+    end
   end
   
-  deck = Deck.new
-
-  player = Player.new('chris')
-  2.times do
-    player.add_card(deck.deal)
+  def start
+    system 'clear'
+    puts "Welcome to Blackjack!"
+    set_player_name
+    initial_deal
+    show_hands
+    player_turn
+    dealer_turn
+    winner?
   end
-  player.show_hand
-
-  dealer = Dealer.new
-  2.times do
-    dealer.add_card(deck.deal)
-  end
-  dealer.show_hand
 end
 
-Game.new
+game = Blackjack.new
+game.start
