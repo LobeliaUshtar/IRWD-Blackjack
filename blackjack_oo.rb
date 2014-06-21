@@ -1,11 +1,12 @@
 class Card
-  def initialize(value, suit)
+  attr_accessor :suit, :value
+  def initialize(suit, value)
     @suit = suit
     @value = value
   end
 
   def to_s
-    "The card: #{@value} of #{@suit}"
+    puts "Card: #{@value} of #{@suit}"
   end
 end
 
@@ -35,19 +36,13 @@ class Deck
   end
 end
 
-# class Player
-#   def get_name
-#     puts "\nWhat is your name?"
-#     @player = gets.chomp.capitalize
-#     puts "Hello #{@player}, let's get playing."
-#   end
+class Player
 
-#   get_name
-# end
+end
 
-# class Dealer
+class Dealer
   
-# end
+end
 
 module Hand
   def calculate_total(cards)
@@ -76,19 +71,25 @@ module Hand
   end
 end
 
-# class Game
-#   attr_accessor :player, :dealer, :deck
+class Game
+  attr_accessor :player, :dealer, :deck
 
-#   def initialize
-#     @player = Player.new('Bob')
-#     @dealer = Dealer.new
-#     @deck = Deck.new
-#   end
+  def initialize
+    @player = Player.new('Bob')
+    @dealer = Dealer.new
+    @deck = Deck.new
+  end
   
-# end
+end
 
+c1 = Card.new('Hearts', '3')
+c2 = Card.new('Diamonds', '4')
 
+puts c1.suit
+puts c2.suit
 
-deck = Deck.new
-deck.shuffling
-deck.deal
+c1.suit = "Spades"
+c2.suit = "Clubs"
+
+puts c1.suit
+puts c2.suit
