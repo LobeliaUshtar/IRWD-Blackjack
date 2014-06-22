@@ -151,7 +151,7 @@ class Blackjack
       else
         puts "Congrats, #{player.name} hit balckjack and wins. =)"
       end
-      exit
+      play_again?
     elsif player_or_dealer.is_busted?
       if player_or_dealer.is_a?(Dealer)
         puts "Congrats, dealer busted and #{player.name} wins. =)"
@@ -176,6 +176,7 @@ class Blackjack
 
       if response == 2
         puts "#{player.name} chose to stay."
+        player.show_hand
         break
       end
 
@@ -183,7 +184,6 @@ class Blackjack
       puts "Dealing card to #{player.name}: #{new_card}"
       player.add_card(new_card)
       puts "#{player.name}'s Updated Total: #{player.total}"
-
       blackjack_or_bust?(player)
     end
     puts "#{player.name} stays at #{player.total}."
@@ -197,7 +197,7 @@ class Blackjack
       new_card = deck.deal
       puts "Dealing card to dealer: #{new_card}"
       dealer.add_card(new_card)
-      puts "Dealer's Updated Total: #{dealer.total}"
+      dealer.show_hand
       blackjack_or_bust?(dealer)
     end
     puts "Dealer stays at #{dealer.total}."
